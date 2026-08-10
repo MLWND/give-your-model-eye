@@ -1,0 +1,9 @@
+{
+  "name": "image-vision",
+  "description": "Image understanding for text-only models: analyze images via an OpenAI-compatible vision API (configurable endpoint, model, and key).",
+  "version": "0.1.0",
+  "author": {
+    "name": "XJL"
+  },
+  "license": "MIT"
+}

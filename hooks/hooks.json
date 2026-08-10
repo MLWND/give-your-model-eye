@@ -1,0 +1,48 @@
+{
+  "description": "Remind the model to use the image-vision skill when an image is involved (image reads, direct binary reads, or image references in user prompts).",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/skills/image-vision/scripts/read_image_hook.py"
+            ],
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/skills/image-vision/scripts/read_image_hook.py"
+            ],
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/skills/image-vision/scripts/read_image_hook.py"
+            ],
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

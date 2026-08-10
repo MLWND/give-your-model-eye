@@ -1,0 +1,5 @@
+{
+  "api_key": "sk-your-api-key",
+  "api_url": "https://your-host/v1/chat/completions",
+  "model": "your-vision-model"
+}

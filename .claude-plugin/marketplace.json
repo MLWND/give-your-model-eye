@@ -1,0 +1,12 @@
+{
+  "name": "image-vision",
+  "owner": {
+    "name": "XJL"
+  },
+  "plugins": [
+    {
+      "name": "image-vision",
+      "source": "./"
+    }
+  ]
+}
