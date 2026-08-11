@@ -76,6 +76,9 @@ cp -r <skill目录> ~/.copilot/skills/
 
 **首次使用运行配置向导，输入模型 id / API key / URL 即可**：
 
+提醒一下:如果这是第一次使用,需要先配置一次视觉模型的 API:
+python ~/.claude/plugins/cache/image-vision/image-vision/0.1.0/skills/image-vision/scripts/setup.py
+
 打开终端（PowerShell / Git Bash / cmd），进入 skill 目录后运行：
 
 ```bash
