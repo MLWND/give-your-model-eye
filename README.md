@@ -14,7 +14,9 @@ Claude Code 插件：让无法直接读图的模型（文本模型 / 视觉能�
 npx github:MLWND/give-your-model-eye
 ```
 
-自动把 skill 安装到 Claude Code、Codex、opencode、Gemini、Copilot 的 skill 目录，首次运行自动进入配置向导（模型 id / API key / URL）。前提：已安装 Node.js。
+自动把 skill 安装到 Claude Code、Codex、opencode、Gemini、Copilot 的 skill 目录，首次运行自动进入配置向导（模型 id / API key / URL）。前提：已安装 Node.js（>= 16.7；配置向导还需 Python 3）。
+
+> 注：一键安装只装 skill，不含 Claude Code 的自动提醒 hook（hook 需插件方式，见方式二）。若同时用插件方式安装，本地副本与插件会重复注册，建议二选一。
 
 ### 方式二：按 agent 单独安装
 
@@ -81,7 +83,7 @@ cd ~/.agents/skills/image-vision
 python scripts/setup.py
 ```
 
-> 一键安装后首次运行会自动进入向导，无需手动执行；如已配置过，直接回车保留现有值。Windows cmd 请用 `%USERPROFILE%` 代替 `~`。
+> 一键安装后首次运行会自动进入向导，无需手动执行；再次运行 `npx github:MLWND/give-your-model-eye --setup` 可重开向导修改配置（已配置过，直接回车保留现有值）。Windows cmd 请用 `%USERPROFILE%` 代替 `~`。
 
 配置写入 `~/.claude/image-vision.json`，所有 agent 共用。URL 可填 base 地址（自动补全 `/chat/completions`）或完整端点。
 

@@ -4,12 +4,16 @@
 
 ## 安装
 
-**方式一：GitHub marketplace（推荐，一键安装/更新）**
+**方式一：GitHub marketplace（推荐，一键安装/更新，带 hook 自动提醒）**
+
+在 Claude Code 会话内执行：
 
 ```bash
-claude plugin marketplace add MLWND/give-your-model-eye
-claude plugin install image-vision@image-vision
+/plugin marketplace add MLWND/give-your-model-eye
+/plugin install image-vision@image-vision
 ```
+
+或 `npx github:MLWND/give-your-model-eye` 一键安装到各 agent（只装 skill，不含 hook；需要 hook 用插件方式或手动注册，见下文 Hook）。
 
 **方式二：本地插件目录（测试用，无需发布）**
 
@@ -32,7 +36,7 @@ cd ~/.agents/skills/image-vision
 python scripts/setup.py
 ```
 
-> 一键安装后首次运行会自动进入向导；如已配置过，直接回车保留现有值。Windows cmd 请用 `%USERPROFILE%` 代替 `~`。
+> 一键安装后首次运行会自动进入向导；再次运行 `npx github:MLWND/give-your-model-eye --setup` 可重开向导修改配置（已配置过，直接回车保留现有值）。Windows cmd 请用 `%USERPROFILE%` 代替 `~`。
 
 配置写入 `~/.claude/image-vision.json`（放用户目录是为了避免插件更新覆盖配置），所有 agent 共用。URL 可填 base 地址（自动补全 `/chat/completions`）或完整端点。
 
@@ -48,7 +52,7 @@ python scripts/setup.py
 
 任何 OpenAI 兼容 Chat Completions 服务均可。缺配置时脚本会报清晰错误，提示运行 setup.py。
 
-> 注意：同时安装本地版（`~/.claude/skills/image-vision/`）和插件版会重复注册 hook、重复提醒。二选一；改用插件版时删除本地目录和 `~/.claude/settings.json` 里手动注册的 hook 条目。
+> 注意：同时安装本地版（`~/.claude/skills/image-vision/`，含一键安装）和插件版会重复注册 hook、重复提醒。二选一；改用插件版时删除本地目录和 `~/.claude/settings.json` 里手动注册的 hook 条目。
 
 ## 目录结构
 

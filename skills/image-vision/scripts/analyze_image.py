@@ -37,28 +37,19 @@ try:
 except ImportError:
     HAVE_PIL = False
 
+from common import CONFIG_PATH, complete_api_url, force_utf8_stdio
 
-def _force_utf8_stdio():
-    """Windows default stdio is the console codepage (GBK); use UTF-8 for paths/messages."""
-    for stream in (sys.stdin, sys.stdout, sys.stderr):
-        try:
-            stream.reconfigure(encoding="utf-8")
-        except (AttributeError, OSError, ValueError):
-            pass
-
-
-_force_utf8_stdio()
+force_utf8_stdio()
 
 API_URL_ENV = "IMAGE_VISION_API_URL"
 API_KEY_ENV = "IMAGE_VISION_API_KEY"
 MODEL_ENV = "IMAGE_VISION_MODEL"
 # Config lookup order: environment > global user config > skill-dir config.
 # The global path (~/.claude/image-vision.json) survives plugin cache updates.
-GLOBAL_CONFIG = os.path.join(os.path.expanduser("~"), ".claude", "image-vision.json")
 LOCAL_CONFIG = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config.json"
 )
-CONFIG_FILES = [GLOBAL_CONFIG, LOCAL_CONFIG]
+CONFIG_FILES = [CONFIG_PATH, LOCAL_CONFIG]
 DEFAULT_PROMPT = (
     "Describe this image concisely. Include all visible text, UI elements, "
     "colors, layout, and any notable details. Only report what is asked."
@@ -105,17 +96,17 @@ def load_config():
     cfg = {"api_url": os.environ.get(API_URL_ENV),
            "api_key": os.environ.get(API_KEY_ENV),
            "model": os.environ.get(MODEL_ENV)}
-    if all(cfg.values()):
-        return cfg
     for path in CONFIG_FILES:
+        if all(cfg.values()):
+            break
         try:
             with open(path, encoding="utf-8") as f:
                 file_cfg = json.load(f)
+            if not isinstance(file_cfg, dict):
+                sys.exit(f"Error: config file {path} must be a JSON object.")
             for key in cfg:
                 if not cfg[key]:
                     cfg[key] = file_cfg.get(key)
-            if all(cfg.values()):
-                break
         except OSError:
             continue  # file absent; try next candidate
         except json.JSONDecodeError as e:
@@ -125,9 +116,12 @@ def load_config():
                       ("model", "run scripts/setup.py or set IMAGE_VISION_MODEL")):
         if not cfg[key]:
             sys.exit(f"Error: {key} is not configured; {hint}.")
+    if not isinstance(cfg["api_url"], str):
+        sys.exit("Error: api_url must be a string (check your config file).")
     # Accept a base URL; append the OpenAI-compatible endpoint if missing.
-    if not cfg["api_url"].rstrip("/").endswith("/chat/completions"):
-        cfg["api_url"] = cfg["api_url"].rstrip("/") + "/chat/completions"
+    # Applied to every config source (env vars included); URLs that already
+    # carry a query string (e.g. Azure OpenAI ?api-version=) pass through.
+    cfg["api_url"] = complete_api_url(cfg["api_url"])
     return cfg
 
 

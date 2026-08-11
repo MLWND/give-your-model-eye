@@ -21,23 +21,21 @@ import argparse
 import json
 import os
 import sys
+from urllib.parse import urlparse
 
-CONFIG_PATH = os.path.join(os.path.expanduser("~"), ".claude", "image-vision.json")
+from common import CONFIG_PATH, complete_api_url, force_utf8_stdio
+
+force_utf8_stdio()
+
 FIELDS = [("model", "Model ID", True),
           ("api_key", "API Key", False),
           ("api_url", "API URL", True)]
 
-
-def _force_utf8_stdio():
-    """Windows default stdio is the console codepage (GBK); use UTF-8 for prompts."""
-    for stream in (sys.stdin, sys.stdout, sys.stderr):
-        try:
-            stream.reconfigure(encoding="utf-8")
-        except (AttributeError, OSError, ValueError):
-            pass
-
-
-_force_utf8_stdio()
+# The shipped config template; its values are the placeholders a real config
+# must not keep (the single source of truth for both this wizard and install.js).
+EXAMPLE_CONFIG = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config.example.json"
+)
 
 
 def ask(label, current, visible):
@@ -46,7 +44,15 @@ def ask(label, current, visible):
         prompt = f"{label}{hint}: "
     else:
         prompt = f"{label}: "
-    value = input(prompt).strip()
+    try:
+        value = input(prompt).strip()
+    except EOFError:
+        print()
+        sys.exit("Error: no input available (stdin closed). Use --url/--api-key/--model "
+                 "for non-interactive setup.")
+    except KeyboardInterrupt:
+        print()
+        sys.exit("Setup cancelled.")
     return value or current
 
 
@@ -61,6 +67,8 @@ def main():
     try:
         with open(CONFIG_PATH, encoding="utf-8") as f:
             cfg = json.load(f)
+        if not isinstance(cfg, dict):
+            cfg = {}  # e.g. "null" or an array left over from hand-editing
     except (OSError, json.JSONDecodeError):
         cfg = {}
 
@@ -75,17 +83,33 @@ def main():
             if not values[key]:
                 values[key] = cfg.get(key, "")
 
-    url = values["api_url"].strip()
+    url = values["api_url"]
+    if not isinstance(url, str):
+        sys.exit("Error: api_url in the existing config must be a string.")
+    url = url.strip()
     if not url.startswith(("http://", "https://")):
         sys.exit("Error: API URL must start with http:// or https://")
-    url = url.rstrip("/")
-    if not url.endswith("/chat/completions"):
-        url += "/chat/completions"
-    values["api_url"] = url
+    values["api_url"] = complete_api_url(url)
+
+    # Placeholder markers come from the shipped template itself.
+    try:
+        with open(EXAMPLE_CONFIG, encoding="utf-8") as f:
+            example = json.load(f)
+        if not isinstance(example, dict):
+            example = {}
+    except (OSError, json.JSONDecodeError):
+        example = {}
+    markers = {"model": example.get("model", ""),
+               "api_key": example.get("api_key", ""),
+               "api_url": urlparse(example.get("api_url", "")).netloc}
 
     for key in ("model", "api_key", "api_url"):
         if not values[key]:
             sys.exit(f"Error: {key} is not set. Run setup again and provide it.")
+        marker = markers[key]
+        if marker and marker in values[key]:
+            sys.exit(f"Error: {key} still contains the config template placeholder "
+                     f"({marker}); provide a real value.")
 
     os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)
     with open(CONFIG_PATH, "w", encoding="utf-8") as f:

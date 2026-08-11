@@ -5,5 +5,8 @@
   "bin": {
     "give-your-model-eye": "install.js"
   },
+  "engines": {
+    "node": ">=16.7"
+  },
   "license": "MIT"
 }

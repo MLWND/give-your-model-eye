@@ -64,7 +64,7 @@ Enter the model ID, API key, and API URL when prompted (existing values are kept
 
 ## Companion Hook
 
-One script (`scripts/read_image_hook.py`) covers three cases; registered automatically when installed as a plugin (`hooks/hooks.json`), or manually via `~/.claude/settings.json` for direct installs:
+One script (`scripts/read_image_hook.py`) covers three cases; registered automatically when installed as a plugin (`hooks/hooks.json`), or manually via `~/.claude/settings.json` for direct installs. Note: the `npx` one-click installer does not register hooks — use the plugin install or register in `settings.json` if you want reminders:
 - **PreToolUse (Read)** — image file read → reminder.
 - **PreToolUse (Bash)** — command reads an image directly (cat/type/Get-Content) → reminder not to rely on binary output.
 - **UserPromptSubmit** — prompt references an image (path, `[Unsupported Image]`, or image keywords) → reminder, listing recent temp image paths when found.

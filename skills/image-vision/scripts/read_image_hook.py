@@ -23,6 +23,10 @@ import sys
 import tempfile
 import time
 
+from common import force_utf8_stdio
+
+force_utf8_stdio()
+
 IMAGE_EXTENSIONS = {
     ".png", ".jpg", ".jpeg", ".gif", ".webp",
     ".bmp", ".svg", ".ico", ".avif", ".tif", ".tiff",
@@ -34,18 +38,6 @@ BASH_READ_RE = re.compile(
     re.IGNORECASE,
 )
 IMAGE_KEYWORDS = ("截图", "图片", "贴图", "粘贴", "screenshot", "pasted", "image", "贴了")
-
-
-def _force_utf8_stdio():
-    """Windows default stdio is the console codepage (GBK); the harness uses UTF-8."""
-    for stream in (sys.stdin, sys.stdout, sys.stderr):
-        try:
-            stream.reconfigure(encoding="utf-8")
-        except (AttributeError, OSError, ValueError):
-            pass
-
-
-_force_utf8_stdio()
 
 READ_REMINDER = (
     "Note: the file being read is an image. The current model may not be able to view "
