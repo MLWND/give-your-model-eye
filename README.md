@@ -1,4 +1,4 @@
-# image-vision
+# give your model eye
 
 Claude Code 插件：让无法直接读图的模型（文本模型 / 视觉能力受限）获得图像理解能力。
 
@@ -7,7 +7,7 @@ Claude Code 插件：让无法直接读图的模型（文本模型 / 视觉能�
 ## 安装
 
 ```bash
-claude plugin marketplace add <owner>/image-vision-plugin
+claude plugin marketplace add MLWND/give-your-model-eye
 claude plugin install image-vision@image-vision
 ```
 

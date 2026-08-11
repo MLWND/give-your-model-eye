@@ -1,4 +1,4 @@
-# image-vision (看图)
+# give your model eye (看图)
 
 让无法直接读图的文本模型获得图像理解能力：把图片发给 OpenAI 兼容的视觉模型 API，把分析结果以文本形式返回给调用方。
 
@@ -7,7 +7,7 @@
 **方式一：GitHub marketplace（推荐，一键安装/更新）**
 
 ```bash
-claude plugin marketplace add <owner>/image-vision-plugin
+claude plugin marketplace add MLWND/give-your-model-eye
 claude plugin install image-vision@image-vision
 ```
 
