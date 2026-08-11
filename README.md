@@ -1,5 +1,7 @@
 # give your model eye
 
+![give your model eye](assets/give-your-model-eye.png)
+
 Claude Code 插件：让无法直接读图的模型（文本模型 / 视觉能力受限）获得图像理解能力。
 
 图片会发送到你配置的 OpenAI 兼容视觉模型 API，分析结果以文本返回给当前模型。
