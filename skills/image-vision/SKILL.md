@@ -1,19 +1,29 @@
 ---
 name: image-vision
-description: This skill should be used when the user asks to "analyze this image", "看看这张图", "图片里有什么", "分析这张图片", "识别图片内容", or when the current model cannot read or view an image file (image reading fails, or the model lacks vision capability). Provides image understanding via a vision model API (OpenAI-compatible; configured in config.json).
+description: This skill should be used when the user asks to "analyze this image", "看看这张图", "图片里有什么", "分析这张图片", "识别图片内容", or when the current model cannot read or view an image file (image reading fails, or the model lacks vision capability). Provides image understanding via an OpenAI-compatible vision model API (configured once via scripts/setup.py).
 ---
 
 # Image Vision (看图)
 
 ## Purpose
 
-Analyze images that the current model cannot read itself. Sends the image to a vision model via its OpenAI-compatible Chat Completions API (endpoint, model, and key configured in `config.json`), receives the analysis as text, and uses it to answer the user.
+Analyze images that the current model cannot read itself. Sends the image to a vision model via its OpenAI-compatible Chat Completions API (configured once via `scripts/setup.py`), receives the analysis as text, and uses it to answer the user.
 
 ## When to Use
 
 - The user asks to analyze/describe/read an image (local path, pasted screenshot, or URL).
 - The current model fails to read an image file or lacks vision.
 - A hook reminder (see Companion Hook) flags that an image read may fail.
+
+## First-Time Setup
+
+Configure the API once, from this skill's base directory:
+
+```bash
+python scripts/setup.py
+```
+
+Enter the model ID, API key, and API URL when prompted (existing values are kept on blank input). The URL may be a base URL — `/chat/completions` is appended automatically — or the full endpoint. Config is saved to `~/.claude/image-vision.json`; no other configuration is needed. For non-interactive use: `python scripts/setup.py --url <url> --api-key <key> --model <model>`.
 
 ## How to Use
 
@@ -47,7 +57,7 @@ Analyze images that the current model cannot read itself. Sends the image to a v
 
 ## Notes
 
-- API config: `~/.claude/image-vision.json` (recommended) or `config.json` in the skill directory (`api_url`, `api_key`, `model`); env vars `IMAGE_VISION_API_URL` / `IMAGE_VISION_API_KEY` / `IMAGE_VISION_MODEL` override both.
+- API config: set up once via `python scripts/setup.py` (saved to `~/.claude/image-vision.json`). Environment variables `IMAGE_VISION_API_URL` / `IMAGE_VISION_API_KEY` / `IMAGE_VISION_MODEL` override the saved config (advanced use).
 - Reasoning models: `max_tokens` 4096 covers reasoning + answer; network/API 5xx errors retry once.
 - Formats: png, jpg/jpeg, gif, webp, bmp, svg, ico, avif, tif/tiff; mime guessed from extension. HEIC fails with a clear error (unsupported).
 - **Privacy**: images are sent to the configured API endpoint (third-party service).

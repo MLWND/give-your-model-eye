@@ -1,0 +1,9 @@
+{
+  "name": "give-your-model-eye",
+  "version": "1.0.0",
+  "description": "Universal installer: install the image-vision skill into Claude Code, Codex, opencode, Gemini, and Copilot",
+  "bin": {
+    "give-your-model-eye": "install.js"
+  },
+  "license": "MIT"
+}

@@ -3,7 +3,8 @@
 
 API configuration comes from environment variables (IMAGE_VISION_API_URL /
 IMAGE_VISION_API_KEY / IMAGE_VISION_MODEL) or config files: first
-~/.claude/image-vision.json, then config.json next to the skill.
+~/.claude/image-vision.json, then config.json next to the skill. Run
+scripts/setup.py once to configure interactively.
 
 Usage:
   python analyze_image.py --image <path-or-url> [--image <path2> ...] [--prompt "text"]
@@ -119,11 +120,14 @@ def load_config():
             continue  # file absent; try next candidate
         except json.JSONDecodeError as e:
             sys.exit(f"Error: config file {path} is invalid JSON: {e}")
-    for key, hint in (("api_url", "set IMAGE_VISION_API_URL or fill config.json"),
-                      ("api_key", "set IMAGE_VISION_API_KEY or fill config.json"),
-                      ("model", "set IMAGE_VISION_MODEL or fill config.json")):
+    for key, hint in (("api_url", "run scripts/setup.py or set IMAGE_VISION_API_URL"),
+                      ("api_key", "run scripts/setup.py or set IMAGE_VISION_API_KEY"),
+                      ("model", "run scripts/setup.py or set IMAGE_VISION_MODEL")):
         if not cfg[key]:
             sys.exit(f"Error: {key} is not configured; {hint}.")
+    # Accept a base URL; append the OpenAI-compatible endpoint if missing.
+    if not cfg["api_url"].rstrip("/").endswith("/chat/completions"):
+        cfg["api_url"] = cfg["api_url"].rstrip("/") + "/chat/completions"
     return cfg
 
 

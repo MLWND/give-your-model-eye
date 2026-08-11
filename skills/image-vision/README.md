@@ -25,7 +25,18 @@ claude --plugin-dir /path/to/image-vision-plugin
 
 ## 配置
 
-**把 `config.example.json` 复制为 `~/.claude/image-vision.json` 并填入你的密钥**（放用户目录是为了避免插件更新覆盖配置）。
+**首次使用运行配置向导，输入模型 id / API key / URL 即可**（在 skill 目录下运行）：
+
+```bash
+cd ~/.agents/skills/image-vision
+python scripts/setup.py
+```
+
+> 一键安装后首次运行会自动进入向导；如已配置过，直接回车保留现有值。Windows cmd 请用 `%USERPROFILE%` 代替 `~`。
+
+配置写入 `~/.claude/image-vision.json`（放用户目录是为了避免插件更新覆盖配置），所有 agent 共用。URL 可填 base 地址（自动补全 `/chat/completions`）或完整端点。
+
+手动方式：把 `config.example.json` 复制为 `~/.claude/image-vision.json` 并填入。
 
 优先级：环境变量 > `~/.claude/image-vision.json` > skill 目录 `config.json`（本地开发用）。
 
@@ -35,7 +46,7 @@ claude --plugin-dir /path/to/image-vision-plugin
 | API 密钥 | `IMAGE_VISION_API_KEY` | `api_key` |
 | 模型名 | `IMAGE_VISION_MODEL` | `model` |
 
-任何 OpenAI 兼容 Chat Completions 服务均可。缺配置时脚本会报清晰错误。
+任何 OpenAI 兼容 Chat Completions 服务均可。缺配置时脚本会报清晰错误，提示运行 setup.py。
 
 > 注意：同时安装本地版（`~/.claude/skills/image-vision/`）和插件版会重复注册 hook、重复提醒。二选一；改用插件版时删除本地目录和 `~/.claude/settings.json` 里手动注册的 hook 条目。
 
@@ -47,6 +58,7 @@ image-vision/
 ├── config.example.json   — 配置模板（复制为 ~/.claude/image-vision.json 并填写）
 ├── README.md             — 本文档
 └── scripts/
+    ├── setup.py          — 首次配置向导（输入模型 id / api key / url）
     ├── analyze_image.py  — 核心脚本（图片 → 视觉模型 → 文本分析）
     └── read_image_hook.py— 配套 hook（Read/Bash 读图、用户消息含图时提醒调用 skill）
 ```
